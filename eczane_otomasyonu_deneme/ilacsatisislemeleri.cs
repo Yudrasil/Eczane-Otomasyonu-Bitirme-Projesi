@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace eczane_otomasyonu_deneme
@@ -67,6 +68,49 @@ namespace eczane_otomasyonu_deneme
             IlacStokSayisi = ilacStokSayisi;
             Tutar = ilacfiyatbul(ilacID);
         }
+        public bool KartlaOdemeYap(string kartNumarasi, string kartSahibi, string sonKullanmaTarihi, string cvv)
+        {
+            try
+            {
+                if (kartNumarasi.Length != 16 || !kartNumarasi.All(char.IsDigit))
+                {
+                    MessageBox.Show("Geçersiz kart numarası.");
+                    return false;
+                }
+                if (string.IsNullOrWhiteSpace(kartSahibi))
+                {
+                    MessageBox.Show("Kart sahibi adı boş olamaz.");
+                    return false;
+                }
+                DateTime sonKullanma;
+                if (!DateTime.TryParseExact(sonKullanmaTarihi, "MM/yy", null, System.Globalization.DateTimeStyles.None, out sonKullanma))
+                {
+                    MessageBox.Show("Geçersiz son kullanma tarihi.");
+                    return false;
+                }
+
+                if (sonKullanma < DateTime.Now)
+                {
+                    MessageBox.Show("Kartın son kullanma tarihi geçmiş.");
+                    return false;
+                }
+                if (cvv.Length < 3 || cvv.Length > 4 || !cvv.All(char.IsDigit))
+                {
+                    MessageBox.Show("Geçersiz CVV.");
+                    return false;
+                }
+
+                MessageBox.Show("Ödeme başarıyla gerçekleştirildi.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ödeme işlemi sırasında bir hata oluştu: " + ex.Message);
+                return false;
+            }
+        }
+
+
 
         public void SatisYap(int odemeyontemi)
         {
@@ -76,11 +120,34 @@ namespace eczane_otomasyonu_deneme
             }
             else if (odemeyontemi == 1) //Kartla Ödeme
             {
-                // Kartla ödeme işlemleri
+                //kart işlemlerine atar.
             }
             else if (odemeyontemi == 2)//borç alma
             {
-                // Borç alma işlemleri
+                if (!string.IsNullOrEmpty(AliciTc))
+                {
+                    d.databaseOpen(conn);
+                    string query = "UPDATE dbo.Hasta SET HastaBorcMiktari = HastaBorcMiktari + @tutar WHERE HastaTc = @tc";
+
+                    SqlCommand com = new SqlCommand(query, conn);
+                    com.Parameters.AddWithValue("@tutar", Tutar);
+                    com.Parameters.AddWithValue("@tc", AliciTc);
+                    try
+                    {
+                        com.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+
+
+                    MessageBox.Show("Borç Eklendi!");
+                }
+                else
+                {
+                    MessageBox.Show("Lütfen Hasta Kaydedin ya da E-Reçete Sistemini Kullanın!!!!","Geçersiz Hasta Satışı",MessageBoxButtons.OK);
+                }
             }
         }
 
@@ -88,9 +155,9 @@ namespace eczane_otomasyonu_deneme
         {
             MessageBox.Show(AliciAdi);
             MessageBox.Show(AliciSoyadi);
-            MessageBox.Show(AliciTc);
             MessageBox.Show(AliciSigorta.ToString());
-            foreach (string s in IlacAdi)
+            MessageBox.Show(AliciTc);
+          /*  foreach (string s in IlacAdi)
             {
                 MessageBox.Show(s);
             }
@@ -102,7 +169,7 @@ namespace eczane_otomasyonu_deneme
             foreach (var item in IlacStokSayisi)
             {
                 MessageBox.Show("Stok: " + item.ToString());
-            }
+            }*/
         }
     }
 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO.Ports;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Windows.Forms;
 
@@ -19,12 +21,14 @@ namespace eczane_otomasyonu_deneme
         database d = new database();
         SqlConnection conn;
         ilacsatisislemeleri sat = ilacsatisislemeleri.GetInstance();
+        arduino ard = new arduino();
+
         int receteID = -1;
 
 
 
 
-        private void aramaYapGENEL(string tabloadi, string sutunadi, object aranan)
+        private void aramaYapGENEL(string tabloadi, string sutunadi, object aranan, DataGridView datagrid)
         {
             try
             {
@@ -40,12 +44,12 @@ namespace eczane_otomasyonu_deneme
                 {
                     DataTable dt = new DataTable();
                     dt.Load(reader);
-                    dgv_Ilaclar.DataSource = dt;
+                    datagrid.DataSource = dt;
                     reader.Close();
                 }
                 else
                 {
-                    dgv_Ilaclar.DataSource = null;
+                    datagrid.DataSource = null;
                 }
                 reader.Close();
             }
@@ -57,6 +61,8 @@ namespace eczane_otomasyonu_deneme
 
         private void ereceteDoldurma(int receteID)
         {
+            ilacID.Clear();
+
             SqlCommand cmd = new SqlCommand("SELECT * FROM dbo.UrunRecete WHERE UrunReceteID = @receteid", conn);
             cmd.Parameters.AddWithValue("@receteid", receteID);
 
@@ -69,7 +75,6 @@ namespace eczane_otomasyonu_deneme
 
                 dataGridView1.Columns[0].HeaderText = "Reçete Kodu";
                 dataGridView1.Columns[1].HeaderText = "İlaç Kodu";
-
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -94,6 +99,7 @@ namespace eczane_otomasyonu_deneme
         private void ilaclariAktar(List<int> ilacID)
         {
             listBox1.Items.Clear();
+            ilacadiList.Clear();
 
             foreach (int item in ilacID)
             {
@@ -112,10 +118,9 @@ namespace eczane_otomasyonu_deneme
 
                 dr.Close();
 
-                sat.satinalinacakilaclar(ilacID, ilacadiList, urunstoksayisi(ilacID));
-
                 listBox1.Items.Add(sb.ToString());
             }
+            sat.satinalinacakilaclar(ilacID, ilacadiList, urunstoksayisi(ilacID));
         }
 
         private List<int> urunstoksayisi(List<int> urunid)
@@ -177,16 +182,15 @@ namespace eczane_otomasyonu_deneme
                 textBox6.Text = sb.ToString();
             }
 
-            reader.Close();            
+            reader.Close();
         }
 
 
         private void Form2_FormClosed(object sender, FormClosedEventArgs e)
         {
             Form1 f = new Form1();
-            Dispose();
+            this.Dispose();
             f.ShowDialog();
-
         }
         private void Form2_Load(object sender, EventArgs e)
         {
@@ -204,20 +208,30 @@ namespace eczane_otomasyonu_deneme
 
             dgv_Ilaclar.CellContentClick += new DataGridViewCellEventHandler(dgv_ilaclar_CellContentClick);
 
+
+            DataGridViewButtonColumn buttonColumn2 = new DataGridViewButtonColumn();
+            buttonColumn2.HeaderText = "İlaç Ekle";
+            buttonColumn2.Name = "Buton";
+            buttonColumn2.Text = "Sat";
+            buttonColumn2.UseColumnTextForButtonValue = true;
+            dataGridView2.Columns.Add(buttonColumn2);
+
+            dataGridView2.CellContentClick += DataGridView2_CellContentClick;
+
         }
 
-        private void dgv_ilaclar_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void DataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == dgv_Ilaclar.Columns["Buton"].Index && e.RowIndex >= 0)
+            if (e.ColumnIndex == dataGridView2.Columns["Buton"].Index && e.RowIndex >= 0)
             {
                 int rowIndex = e.RowIndex;
-                var cellValue = dgv_Ilaclar.Rows[rowIndex].Cells[1].Value;
+                var cellValue = dataGridView2.Rows[rowIndex].Cells[1].Value;
 
-                if (cellValue != null) {
-
+                if (cellValue != null)
+                {
                     d.databaseOpen(conn);
-                    SqlCommand cmd = new SqlCommand("select * from dbo.Urunler where UrunlerID = @cell ", conn);
-                    cmd.Parameters.AddWithValue("@cell",cellValue );
+                    SqlCommand cmd = new SqlCommand("select * from dbo.YanUrunler where YanUrunlerID = @cell ", conn);
+                    cmd.Parameters.AddWithValue("@cell", cellValue);
                     SqlDataReader reader = cmd.ExecuteReader();
                     reader.Read();
                     if (reader.HasRows)
@@ -229,7 +243,37 @@ namespace eczane_otomasyonu_deneme
                     ilaclariAktar(ilacID);
                     hastaArama(receteID);
 
-                    sat.satinalinacakilaclar(ilacID,ilacadiList,stoksayisi);
+                    sat.satinalinacakilaclar(ilacID, ilacadiList, stoksayisi);
+                    listBox3.Items.Add(dataGridView2.Rows[rowIndex].Cells[3].Value);
+                }
+            }
+        }
+
+        object cellValue;
+        private void dgv_ilaclar_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == dgv_Ilaclar.Columns["Buton"].Index && e.RowIndex >= 0)
+            {
+                int rowIndex = e.RowIndex;
+               cellValue = dgv_Ilaclar.Rows[rowIndex].Cells[1].Value;
+
+                if (cellValue != null) {
+
+                    d.databaseOpen(conn);
+                    SqlCommand cmd = new SqlCommand("select * from dbo.Urunler where UrunlerID = @cell ", conn);
+                    cmd.Parameters.AddWithValue("@cell", cellValue);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    reader.Read();
+                    if (reader.HasRows)
+                    {
+                        ilacID.Add((int)reader[0]);
+                    }
+                    reader.Close();
+
+                    ilaclariAktar(ilacID);
+                    hastaArama(receteID);
+
+                    sat.satinalinacakilaclar(ilacID, ilacadiList, stoksayisi);
                     listBox2.Items.Add(dgv_Ilaclar.Rows[rowIndex].Cells[2].Value);
                 }
             }
@@ -275,36 +319,131 @@ namespace eczane_otomasyonu_deneme
         {
             if (textBox1.Text.Length >= 3)
             {
-                aramaYapGENEL("Urunler", "UrunlerAd", textBox1.Text);
+                aramaYapGENEL("Urunler", "UrunlerAd", textBox1.Text, dgv_Ilaclar);
             }
         }
         private void textBox3_TextChanged(object sender, EventArgs e)
         {
             if (textBox3.Text.Length >= 3)
             {
-                aramaYapGENEL("Urunler", "UrunlerATC_Adi", textBox3.Text);
+                aramaYapGENEL("Urunler", "UrunlerATC_Adi", textBox3.Text, dgv_Ilaclar);
             }
         }
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             if (textBox2.Text.Length >= 3)
             {
-                aramaYapGENEL("Urunler", "UrunlerBarkod", textBox2.Text);
+                aramaYapGENEL("Urunler", "UrunlerBarkod", textBox2.Text, dgv_Ilaclar);
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-          satinalmaekrani satinalmaekrani = new satinalmaekrani();
+            satinalmaekrani satinalmaekrani = new satinalmaekrani();
             satinalmaekrani.Show();
             this.Hide();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+
+                if (listBox2.Items.Count!=0)
+            {
+                database d = new database();
+                SqlConnection conn;
+                string portname = "COM4";
+
+                conn = new SqlConnection(d.databaseCreate());
+                d.databaseOpen(conn);
+
+                try
+                {
+                    if (!serialPort1.IsOpen)
+                    {
+                        serialPort1.PortName = portname;
+                        serialPort1.BaudRate = 9600;
+                        serialPort1.Open();
+                    }
+                    string komut = "";
+
+                    SqlCommand com = new SqlCommand("SELECT UrunlerSutun, UrunlerSatir FROM Urunler WHERE UrunlerID = @id", conn);
+                    com.Parameters.AddWithValue("@id",Convert.ToInt32(cellValue));
+
+                    SqlDataReader reader = com.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        komut = reader["UrunlerSutun"].ToString() + reader["UrunlerSatir"].ToString();
+                    }
+
+                    reader.Close();
+
+                       MessageBox.Show(komut);
+                        serialPort1.Write(komut);
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Hata: {ex.Message}");
+                }
+                finally
+                {
+                    if (serialPort1.IsOpen)
+                    {
+                        serialPort1.Close();
+                    }
+                }
+
+
+
+             satinalmaekrani satinalmaekrani = new satinalmaekrani();
+            satinalmaekrani.Show();
+            this.Hide();
+        }
+            else
+            {
+                MessageBox.Show("Hiç İlaç Seçmeden Satışa Geçemezsiniz!");
+            }
+    }
+
+        private void listBox2_DoubleClick(object sender, EventArgs e)
+        {
+            int index = listBox2.SelectedIndex;
+            if (index != -1)
+            {
+                DialogResult dia = MessageBox.Show("İlacı Silmek İstiyor Musunuz?", "Silmeyi Onayla", MessageBoxButtons.YesNo);
+                if (dia==DialogResult.Yes)
+                {
+                    listBox2.Items.RemoveAt(index);
+                }
+                else if (dia==DialogResult.No)
+                {
+                }
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            brkd brkd = new brkd();
+            brkd.ShowDialog();
+            textBox8.Text = brkd.barkod;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
             satinalmaekrani satinalmaekrani = new satinalmaekrani();
             satinalmaekrani.Show();
             this.Hide();
+        }
+
+        private void textBox9_TextChanged(object sender, EventArgs e)
+        {
+            aramaYapGENEL("YanUrunler", "YanUrunlerAd", textBox9.Text,dataGridView2);
+        }
+
+        private void dgv_Ilaclar_CellContentClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

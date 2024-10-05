@@ -31,6 +31,9 @@
             this.components = new System.ComponentModel.Container();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tab_ilac = new System.Windows.Forms.TabPage();
+            this.label6 = new System.Windows.Forms.Label();
+            this.listBox2 = new System.Windows.Forms.ListBox();
+            this.button3 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -48,20 +51,32 @@
             this.label5 = new System.Windows.Forms.Label();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.yanurunler = new System.Windows.Forms.TabPage();
+            this.label7 = new System.Windows.Forms.Label();
+            this.listBox3 = new System.Windows.Forms.ListBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.urunlerBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.eczaneOtomasyonuVeArduinoAraciligiylaStokTakipDataSet = new eczane_otomasyonu_deneme.EczaneOtomasyonuVeArduinoAraciligiylaStokTakipDataSet();
             this.aaa = new eczane_otomasyonu_deneme.aaa();
             this.urunlerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.urunlerTableAdapter = new eczane_otomasyonu_deneme.aaaTableAdapters.UrunlerTableAdapter();
             this.urunlerTableAdapter1 = new eczane_otomasyonu_deneme.EczaneOtomasyonuVeArduinoAraciligiylaStokTakipDataSetTableAdapters.UrunlerTableAdapter();
-            this.button3 = new System.Windows.Forms.Button();
-            this.listBox2 = new System.Windows.Forms.ListBox();
-            this.label6 = new System.Windows.Forms.Label();
+            this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.tabControl1.SuspendLayout();
             this.tab_ilac.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_Ilaclar)).BeginInit();
             this.tab_e_recete_sorgu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.yanurunler.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.urunlerBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.eczaneOtomasyonuVeArduinoAraciligiylaStokTakipDataSet)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.aaa)).BeginInit();
@@ -72,6 +87,7 @@
             // 
             this.tabControl1.Controls.Add(this.tab_ilac);
             this.tabControl1.Controls.Add(this.tab_e_recete_sorgu);
+            this.tabControl1.Controls.Add(this.yanurunler);
             this.tabControl1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
@@ -99,6 +115,36 @@
             this.tab_ilac.TabIndex = 0;
             this.tab_ilac.Text = "İlaçlar";
             this.tab_ilac.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.Cursor = System.Windows.Forms.Cursors.Default;
+            this.label6.Location = new System.Drawing.Point(1021, 246);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(79, 57);
+            this.label6.TabIndex = 6;
+            this.label6.Text = "Seçilen İlaçlar";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // listBox2
+            // 
+            this.listBox2.FormattingEnabled = true;
+            this.listBox2.ItemHeight = 20;
+            this.listBox2.Location = new System.Drawing.Point(1106, 93);
+            this.listBox2.Name = "listBox2";
+            this.listBox2.Size = new System.Drawing.Size(438, 404);
+            this.listBox2.TabIndex = 5;
+            this.listBox2.DoubleClick += new System.EventHandler(this.listBox2_DoubleClick);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(692, 24);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(92, 57);
+            this.button3.TabIndex = 4;
+            this.button3.Text = "Satışa Geç";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button1
             // 
@@ -178,6 +224,7 @@
             this.dgv_Ilaclar.ReadOnly = true;
             this.dgv_Ilaclar.Size = new System.Drawing.Size(1016, 411);
             this.dgv_Ilaclar.TabIndex = 1;
+            this.dgv_Ilaclar.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_Ilaclar_CellContentClick_1);
             // 
             // tab_e_recete_sorgu
             // 
@@ -266,6 +313,132 @@
             this.label4.TabIndex = 0;
             this.label4.Text = "T.C. KN.";
             // 
+            // yanurunler
+            // 
+            this.yanurunler.Controls.Add(this.label7);
+            this.yanurunler.Controls.Add(this.listBox3);
+            this.yanurunler.Controls.Add(this.button4);
+            this.yanurunler.Controls.Add(this.button5);
+            this.yanurunler.Controls.Add(this.label8);
+            this.yanurunler.Controls.Add(this.label9);
+            this.yanurunler.Controls.Add(this.label10);
+            this.yanurunler.Controls.Add(this.textBox7);
+            this.yanurunler.Controls.Add(this.textBox8);
+            this.yanurunler.Controls.Add(this.textBox9);
+            this.yanurunler.Controls.Add(this.dataGridView2);
+            this.yanurunler.Location = new System.Drawing.Point(4, 29);
+            this.yanurunler.Name = "yanurunler";
+            this.yanurunler.Size = new System.Drawing.Size(1683, 510);
+            this.yanurunler.TabIndex = 2;
+            this.yanurunler.Text = "Yan Ürün Satışı";
+            this.yanurunler.UseVisualStyleBackColor = true;
+            // 
+            // label7
+            // 
+            this.label7.Cursor = System.Windows.Forms.Cursors.Default;
+            this.label7.Location = new System.Drawing.Point(1048, 239);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(79, 57);
+            this.label7.TabIndex = 17;
+            this.label7.Text = "Seçilen İlaçlar";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // listBox3
+            // 
+            this.listBox3.FormattingEnabled = true;
+            this.listBox3.ItemHeight = 20;
+            this.listBox3.Location = new System.Drawing.Point(1133, 86);
+            this.listBox3.Name = "listBox3";
+            this.listBox3.Size = new System.Drawing.Size(438, 404);
+            this.listBox3.TabIndex = 16;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(719, 17);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(92, 57);
+            this.button4.TabIndex = 14;
+            this.button4.Text = "Satışa Geç";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(621, 17);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(92, 57);
+            this.button5.TabIndex = 15;
+            this.button5.Text = "Barkod Oku";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(47, 54);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(67, 20);
+            this.label8.TabIndex = 11;
+            this.label8.Text = "ATC Adı";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(338, 23);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(60, 20);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "Barkod";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(49, 23);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(61, 20);
+            this.label10.TabIndex = 13;
+            this.label10.Text = "İlaç Adı";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(120, 54);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(210, 26);
+            this.textBox7.TabIndex = 8;
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(405, 23);
+            this.textBox8.Name = "textBox8";
+            this.textBox8.Size = new System.Drawing.Size(210, 26);
+            this.textBox8.TabIndex = 9;
+            // 
+            // textBox9
+            // 
+            this.textBox9.Location = new System.Drawing.Point(120, 23);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(210, 26);
+            this.textBox9.TabIndex = 10;
+            this.textBox9.TextChanged += new System.EventHandler(this.textBox9_TextChanged);
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.AllowDrop = true;
+            this.dataGridView2.AllowUserToAddRows = false;
+            this.dataGridView2.AllowUserToDeleteRows = false;
+            this.dataGridView2.AllowUserToOrderColumns = true;
+            this.dataGridView2.AllowUserToResizeColumns = false;
+            this.dataGridView2.AllowUserToResizeRows = false;
+            this.dataGridView2.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllHeaders;
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.Location = new System.Drawing.Point(26, 86);
+            this.dataGridView2.MinimumSize = new System.Drawing.Size(100, 0);
+            this.dataGridView2.MultiSelect = false;
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.ReadOnly = true;
+            this.dataGridView2.Size = new System.Drawing.Size(1016, 411);
+            this.dataGridView2.TabIndex = 7;
+            // 
             // urunlerBindingSource1
             // 
             this.urunlerBindingSource1.DataMember = "Urunler";
@@ -294,35 +467,6 @@
             // 
             this.urunlerTableAdapter1.ClearBeforeFill = true;
             // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(692, 24);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(92, 57);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "Satışa Geç";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // listBox2
-            // 
-            this.listBox2.FormattingEnabled = true;
-            this.listBox2.ItemHeight = 20;
-            this.listBox2.Location = new System.Drawing.Point(1106, 93);
-            this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(438, 404);
-            this.listBox2.TabIndex = 5;
-            // 
-            // label6
-            // 
-            this.label6.Cursor = System.Windows.Forms.Cursors.Default;
-            this.label6.Location = new System.Drawing.Point(1021, 246);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(79, 57);
-            this.label6.TabIndex = 6;
-            this.label6.Text = "Seçilen İlaçlar";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -341,6 +485,9 @@
             this.tab_e_recete_sorgu.ResumeLayout(false);
             this.tab_e_recete_sorgu.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.yanurunler.ResumeLayout(false);
+            this.yanurunler.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.urunlerBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.eczaneOtomasyonuVeArduinoAraciligiylaStokTakipDataSet)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.aaa)).EndInit();
@@ -379,5 +526,18 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ListBox listBox2;
+        private System.Windows.Forms.TabPage yanurunler;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ListBox listBox3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox textBox7;
+        public System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.IO.Ports.SerialPort serialPort1;
     }
 }

@@ -93,7 +93,7 @@ namespace eczane_otomasyonu_deneme
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Application.Exit();
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -101,6 +101,11 @@ namespace eczane_otomasyonu_deneme
             Form3 f = new Form3();
             Hide();
             f.ShowDialog();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

@@ -14,7 +14,7 @@ namespace eczane_otomasyonu_deneme
             InitializeComponent();
         }
         FilterInfoCollection fic;
-        VideoCaptureDevice vcd;
+        VideoCaptureDevice vcd=new VideoCaptureDevice();
         public string barkod = "";
         int i = 0;
 
@@ -52,13 +52,11 @@ namespace eczane_otomasyonu_deneme
         {
             try
             {
-
                 vcd.Stop();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                MessageBox.Show(ex.Message);
             }
             timer1.Stop();
             Close();
